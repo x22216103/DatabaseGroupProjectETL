@@ -1,11 +1,13 @@
 import requests
 import math
 import urllib.request
+from pymongo import MongoClient
+from dagster import op, Out, In, DagsterType
+from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
 from datetime import datetime
+import pandas as pd
 from http.client import IncompleteRead
 import json
-import pandas as pd
-from pymongo import MongoClient
 def loadProperty(locdata):
     url = "https://realtor.p.rapidapi.com/properties/v3/list"
     payload = {
@@ -63,7 +65,7 @@ def createMongo():
     FemaCollection = database['Storm_Collection']
     PropertyCollection = database['Property_Collection']
     CensusCollection = database['Census_Collection']
-    return database
+
 
 def clean_json(x):
     "Create apply function for decoding JSON"
@@ -71,6 +73,71 @@ def clean_json(x):
 
 def storeInMongo(data, table):
     return 0
+
+
+
 db=createMongo()
+mongo_connection_string="mongodb://dap:dap@127.0.0.1"
 FemaToAPI(db.FemaCollection)
-#print(db.FemaCollection.find())
+
+FemaDataFrame = create_dagster_pandas_dataframe_type(
+    name="FemaDataFrame",
+    columns=[
+        PandasColumn.string_column("original_disaster_id",non_nullable=True, unique=True),
+        PandasColumn.integer_column("disaster_number", non_nullable=True),
+        PandasColumn.datetime_column("Incident_date",
+            min_datetime=datetime(year=2003, month=1, day=1),
+            max_datetime=datetime(year=2023, month=12, day=31)),
+        PandasColumn.string_column("state_code", non_nullable=True),
+        PandasColumn.string_column("Incident_Category", non_nullable=True),
+        PandasColumn.string_column("Incident_Description", non_nullable=True),
+        PandasColumn.string_column("fips_County", non_nullable=True),
+        PandasColumn.string_column("fips_state", non_nullable=True),
+        PandasColumn.string_column("County_Name", non_nullable=True)
+    ],
+)
+
+def is_tuple(_, value):
+    return isinstance(value, tuple) and all(
+        isinstance(element, datetime) for element in value
+    )
+
+DateTuple = DagsterType(
+    name="DateTuple",
+    type_check_fn=is_tuple,
+    description="A tuple of scalar values",
+)
+Fema_columns = {
+    "_id": "_id",
+    "disasterNumber":"disaster_number",
+    "incidentBeginDate":"Incident_date",
+    "state": "state_code",
+    "incidentType":"Incident_Category",
+    "declarationTitle": "Incident_Description",
+    "fipsCountyCode": "fips_County",
+    "fipsStateCode": "fips_state",
+    "designatedArea": "County_Name"
+}
+
+@op(ins={'start': In(bool)}, out=Out(FemaDataFrame))
+def extract_Incident(start,db) -> FemaDataFrame:
+    conn = MongoClient(mongo_connection_string)
+    db = conn["Property_Cost"]
+    Fema = pd.DataFrame(db.FemaCollection.find({}))
+    Fema.drop(
+        columns=["femaDeclarationString", "declarationType","declarationDate","fyDeclared","ihProgramDeclared","iaProgramDeclared","paProgramDeclared","hmProgramDeclared","incidentEndDate","disasterCloseoutDate","placeCode","declarationRequestNumber","lastIAFilingDate","lastRefresh","hash","id"],
+        axis=1,
+        inplace=True
+    )
+    Fema.rename(
+        columns=Fema_columns,
+        inplace=True
+    )
+    db.close()
+    return Fema
+
+@op(ins={'Fema': In(FemaDataFrame)}, out=Out(None))
+def stage_extracted_disasters(Fema):
+    Fema.to_csv("staging/fema_disasters.csv",index=False,sep="\t")
+
+
