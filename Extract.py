@@ -140,5 +140,28 @@ def extract_Incident(start,db) -> FemaDataFrame:
 def stage_extracted_disasters(Fema):
     Fema.to_csv("staging/fema_disasters.csv",index=False,sep="\t")
 
-print('hello world')
+
+# set up the MongoDB client and database
+client = pymongo.MongoClient('mongodb+srv://douglascinachi:NFT12345@cluster0.ihns4uv.mongodb.net/test')
+db = client['cost_of_living_base']
+collection = db['cost_of_living_and_prices']
+
+# set up the API endpoint and headers
+url = 'https://cost-of-living-and-prices.p.rapidapi.com/cities'
+headers = {
+    "X-RapidAPI-Key": "433287968emsh1f75307f266f4cdp1f28b1jsne1c662e85d40",
+    "X-RapidAPI-Host": "cost-of-living-and-prices.p.rapidapi.com",
+    'Content-Type': 'application/json'
+}
+
+# make the API request and store the JSON response in MongoDB
+response = requests.get(url, headers=headers)
+if response.ok:
+    data = response.json()
+    collection.insert_one(data)
+    print('Data stored successfully in MongoDB!')
+else:
+    print(f'Request failed with status code {response.status_code}.')
+
+print(data)
 
