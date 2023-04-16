@@ -65,6 +65,7 @@ def createMongo():
     FemaCollection = database['Storm_Collection']
     PropertyCollection = database['Property_Collection']
     CensusCollection = database['Census_Collection']
+    return database
 
 
 def clean_json(x):
