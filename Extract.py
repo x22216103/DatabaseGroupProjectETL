@@ -65,7 +65,7 @@ def createMongo():
     FemaCollection = database['Storm_Collection']
     PropertyCollection = database['Property_Collection']
     CensusCollection = database['Census_Collection']
-
+    return database
 
 def clean_json(x):
     "Create apply function for decoding JSON"
@@ -73,7 +73,6 @@ def clean_json(x):
 
 def storeInMongo(data, table):
     return 0
-
 
 
 db=createMongo()
@@ -146,6 +145,7 @@ client = pymongo.MongoClient('mongodb+srv://douglascinachi:NFT12345@cluster0.ihn
 db = client['cost_of_living_base']
 collection = db['cost_of_living_and_prices']
 
+
 # set up the API endpoint and headers
 url = 'https://cost-of-living-and-prices.p.rapidapi.com/cities'
 headers = {
@@ -164,4 +164,3 @@ else:
     print(f'Request failed with status code {response.status_code}.')
 
 print(data)
-
