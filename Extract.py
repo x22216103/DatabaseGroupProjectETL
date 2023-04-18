@@ -3,7 +3,9 @@ import math
 import urllib.request
 from pymongo import MongoClient
 from dagster import op, Out, In, DagsterType
-from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
+
+def dataframe_constant() -> dgpd.DataFrame:
+    return pd.DataFrame([{datetime.date(2019, 1, 1): 0}])
 from datetime import datetime
 import pandas as pd
 from http.client import IncompleteRead
@@ -64,7 +66,8 @@ def createMongo():
     database = client['Property_Cost']
     FemaCollection = database['Storm_Collection']
     PropertyCollection = database['Property_Collection']
-    CensusCollection = database['Census_Collection']
+    return database
+
 
 
 def clean_json(x):
@@ -141,3 +144,12 @@ def stage_extracted_disasters(Fema):
     Fema.to_csv("staging/fema_disasters.csv",index=False,sep="\t")
 
 print(123)
+#add census data to mongodb
+client = MongoClient("mongodb://%s:%s@127.0.0.1" % ('dap', 'dap'))
+database = client['Property_Cost']
+collection = database['Census_Collection']
+requesting = []
+with open('/censusdata.json', 'r') as f:
+    data = json.load(f)
+collection.insert_many(data)
+client.close()
