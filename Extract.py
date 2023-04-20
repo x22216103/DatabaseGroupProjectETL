@@ -49,7 +49,7 @@ def FemaToAPI(database):
             for entry in result:
                 print(entry)
                 print('\n')
-                database.insert_one(entry)
+                json.dump(entry,outFile)
             i+=1
             skip = i * top
             print("Iteration " + str(i) + " done")
@@ -164,3 +164,4 @@ else:
     print(f'Request failed with status code {response.status_code}.')
 
 print(data)
+
