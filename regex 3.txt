@@ -1,0 +1,19 @@
+^-match  the expression to its right at the start of a string before \n
+ie  coffee= \^cof
+
+$- matches the expression tothe left at the end of a string 
+ie coffee = \$fee
+
+.- Matches expressionto its left except line terminators like \n
+
+car regex
+
+\w matches alphanumeric characters and underscore
+
+\d matches digits
+\s matches whitespace
+\S matches nonwhitspace
+\b matches word boundarys like the startt and end of a word
+\B matches the boundary of \w characters
+\A  the expression to its right at the absolute start of a string in both single and multiline mode
+\Zthe expression to its left at the absolute start of a string in both single and multiline mode
