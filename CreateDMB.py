@@ -1,5 +1,6 @@
 import requests
 import math
+import csv
 import urllib.request
 from pymongo import MongoClient
 from datetime import datetime
@@ -10,11 +11,21 @@ import json
 def createMongo(client):
     database = client['JobRisk_Backup']
     FemaCollection = database['Storm_Collection']
-    PropertyCollection = database['Property_Collection']
+    PropertyCollection = database['Cost_of_Property_Collection']
     CensusCollection = database['Census_Collection']
     return database
 
+def CensusFileRead(db):
+    with open('./censusdata.json', 'r') as f:
+        data = json.load(f)
+    for entry in data:
+        db.insert_one(entry)
+    f.close()
 
+def costFilePull(db):
+    df= pd.read_csv('zillowAvgHP.csv', header=[0])
+    db.insert_many(df.to_dict('records'))
+   
 
 mongo_connection_string="mongodb://dap:dap@127.0.0.1"
 client=MongoClient(mongo_connection_string)
@@ -45,8 +56,13 @@ def FemaToAPI(database):
     except IncompleteRead:
         pass
 
+
 if 'JobRisk_Backup' not in client.list_database_names():
     database = createMongo(client)
     FemaToAPI(database.FemaCollection)
+    CensusFileRead(database.CensusCollection)
+    costFilePull(database.PropertyCollection)
 else:
     database = client['JobRisk_Backup']
+    
+    

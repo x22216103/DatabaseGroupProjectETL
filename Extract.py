@@ -9,43 +9,12 @@ import pandas as pd
 from http.client import IncompleteRead
 import json
 
-def FemaToAPI(database):
-    try:
-        baseUrl = "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries?$filter=incidentType%20eq%20%27Severe%20Storm%27&$inlinecount=allpages&$select=id&$top=1"
-        url = baseUrl.replace(" ","")
-        top = 1000
-        skip = 0 
-        webUrl = urllib.request.urlopen(url)
-        result = webUrl.read()
-        jsonData = json.loads(result.decode())
-        recCount = jsonData['metadata']['count']
-        loopNum = math.ceil(recCount / top)
-        outFile = open("Fema.json", "w")
-        i = 0
-        while (i < loopNum):
-            baseUrl = "https://www.fema.gov/api/open/v2/DisasterDeclarationsSummaries?$filter=incidentType%20eq%20%27Severe%20Storm%27&$inlinecount=allpages&$skip=" + str(skip)+"&$top=" + str(top)
-            url = baseUrl.replace(" ","")
-            webUrl = requests.get(url + "&$metadata=off&$format=jsona")
-            result = webUrl.json()
-            for entry in result:
-                database.insert_one(entry)
-            i+=1
-            skip = i * top
-            print("Iteration " + str(i) + " done")
-        outFile.close()
-    except IncompleteRead:
-        pass
-def createMongo():
-    client= MongoClient("mongodb://%s:%s@127.0.0.1" %('dap','dap'))
-    database = client['JobRisk_Backup']
-    FemaCollection = database['Storm_Collection']
-    PropertyCollection = database['Property_Collection']
-    CensusCollection = database['Census_Collection']
-    return database
 
-#db=createMongo()
+
+
+
 mongo_connection_string="mongodb://dap:dap@127.0.0.1"
-#FemaToAPI(db.FemaCollection)
+
 
 FemaDataFrame = create_dagster_pandas_dataframe_type(
     name="FemaDataFrame",
@@ -104,5 +73,109 @@ def extract_Incident(start) -> FemaDataFrame:
 @op(ins={'Fema': In(FemaDataFrame)}, out=Out(None))
 def stage_extracted_disasters(Fema):
     Fema.to_csv("staging/fema_disasters.csv",index=False,sep="\t")
+
+
+
+
+
+CensusDataFrame = create_dagster_pandas_dataframe_type(
+    name="CensusDataFrame",
+    columns=[
+        PandasColumn.string_column("_id",non_nullable=True, unique=True),
+        PandasColumn.string_column("",
+            non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True)
+    ],
+)
+
+
+Census_columns = {
+    "_id": "",
+    "":"",
+    "":"",
+    "": "",
+    "":"",
+    "": "",
+    "": "",
+    "": "",
+    "": ""
+}
+
+@op(ins={'start': In(bool)}, out=Out(CensusDataFrame))
+def extract_census_data(start) -> CensusDataFrame:
+    conn = MongoClient(mongo_connection_string)
+    db = conn["JobRisk_Backup"]
+    Census = pd.DataFrame(db.CensusCollection.find())
+    Census.drop(
+        columns=[],
+        axis=1,
+        inplace=True
+    )
+    Census.rename(
+        columns=Census_columns,
+        inplace=True
+    )
+    conn.close()
+    return Census
+
+@op(ins={'Census': In(CensusDataFrame)}, out=Out(None))
+def stage_extracted_disasters(Census):
+    Census.to_csv("staging/censusData.csv",index=False,sep="\t")
+
+
+
+CostDataFrame = create_dagster_pandas_dataframe_type(
+    name="CostDataFrame",
+    columns=[
+        PandasColumn.string_column("_id",non_nullable=True, unique=True),
+        PandasColumn.string_column("",
+            non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True),
+        PandasColumn.string_column("", non_nullable=True)
+    ],
+)
+
+
+Cost_columns = {
+    "_id": "",
+    "":"",
+    "":"",
+    "state": "",
+    "":"",
+    "": "",
+    "": "",
+    "": "",
+    "": ""
+}
+
+@op(ins={'start': In(bool)}, out=Out(CostDataFrame))
+def extract_cost_data(start) -> CostDataFrame:
+    conn = MongoClient(mongo_connection_string)
+    db = conn["JobRisk_Backup"]
+    Cost = pd.DataFrame(db.CostCollection.find())
+    Cost.drop(
+        columns=[],
+        axis=1,
+        inplace=True
+    )
+    Cost.rename(
+        columns=Cost_columns,
+        inplace=True
+    )
+    conn.close()
+    return Cost
+
+@op(ins={'Cost': In(CostDataFrame)}, out=Out(None))
+def stage_extracted_disasters(Cost):
+    Cost.to_csv("staging/CostData.csv",index=False,sep="\t")
 
 
