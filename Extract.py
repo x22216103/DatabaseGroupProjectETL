@@ -1,6 +1,7 @@
 import requests
 import math
 import urllib.request
+import numpy as np
 from pymongo import MongoClient
 from dagster import op, Out, In, DagsterType
 from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
@@ -30,6 +31,11 @@ FemaDataFrame = create_dagster_pandas_dataframe_type(
         PandasColumn.string_column("county_name", non_nullable=True)
     ],
 )
+def convert_columns_to_integer(df):
+    for column in df.columns:
+        if column.startswith("HouseCost-") and df[column].dtype == float and df[column].apply(lambda x: x.is_integer()).all():
+            df[column] = df[column].astype(int)
+    return df
 
 def is_tuple(_, value):
     return isinstance(value, tuple) and all(
@@ -174,56 +180,49 @@ def stage_extracted_census(Census):
 CostDataFrame = create_dagster_pandas_dataframe_type(
     name="CostDataFrame",
     columns=[
-        PandasColumn.string_column("_id",non_nullable=False, unique=True),
-        PandasColumn.string_column("HouseCost-01",
-            non_nullable=False),
-        PandasColumn.string_column("HouseCost-02", non_nullable=False),
-        PandasColumn.string_column("HouseCost-03", non_nullable=False),
-        PandasColumn.string_column("HouseCost-04", non_nullable=False),
-        PandasColumn.string_column("HouseCost-05", non_nullable=False),
-        PandasColumn.string_column("HouseCost-06", non_nullable=False),
-        PandasColumn.string_column("HouseCost-07", non_nullable=False),
-        PandasColumn.string_column("HouseCost-08",
-            non_nullable=False),
-        PandasColumn.string_column("HouseCost-09", non_nullable=False),
-        PandasColumn.string_column("HouseCost-10", non_nullable=False),
-        PandasColumn.string_column("HouseCost-11", non_nullable=False),
-        PandasColumn.string_column("HouseCost-12", non_nullable=False),
-        PandasColumn.string_column("HouseCost-12", non_nullable=False),
-        PandasColumn.string_column("HouseCost-13", non_nullable=False),
-        PandasColumn.string_column("HouseCost-14",
-            non_nullable=False),
-        PandasColumn.string_column("HouseCost-15", non_nullable=False),
-        PandasColumn.string_column("HouseCost-16", non_nullable=False),
-        PandasColumn.string_column("HouseCost-17", non_nullable=False),
-        PandasColumn.string_column("HouseCost-18", non_nullable=False),
-        PandasColumn.string_column("HouseCost-19", non_nullable=False),
-        PandasColumn.string_column("HouseCost-20", non_nullable=False),
-        PandasColumn.string_column("HouseCost-21",
-            non_nullable=False),
-        PandasColumn.string_column("Population_Rank", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-01", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-02", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-03", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-04", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-05", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-06", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-07", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-08", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-09", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-10", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-11", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-12", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-13", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-14", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-15", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-16", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-17", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-18", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-19", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-20", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-21", non_nullable=False),
+        PandasColumn.integer_column("HouseCost-22", non_nullable=False),
+        PandasColumn.integer_column("Population_Rank", non_nullable=False),
         PandasColumn.string_column("Region", non_nullable=True),
         PandasColumn.string_column("State", non_nullable=False),
-        
     ],
 )
-
 
 
 Cost_columns = {
     "RegionID":"_id",
     'SizeRank': 'Population_Rank',
-    'RegionName': ' Region',
+    'RegionName': 'Region',
     'StateName': 'State',
-    "01":"HouseCost-01",
-    "02":"HouseCost-02",
-    "03":"HouseCost-03",
-    "04":"HouseCost-04",
-    "05":"HouseCost-05",
-    "06":"HouseCost-06",
-    "07":"HouseCost-07",
-    "08":"HouseCost-08",
-    "09":"HouseCost-09",
+    "1":"HouseCost-01",
+    "2":"HouseCost-02",
+    "3":"HouseCost-03",
+    "4":"HouseCost-04",
+    "5":"HouseCost-05",
+    "6":"HouseCost-06",
+    "7":"HouseCost-07",
+    "8":"HouseCost-08",
+    "9":"HouseCost-09",
     "10":"HouseCost-10",
     "11":"HouseCost-11",
     "12":"HouseCost-12",
@@ -236,15 +235,19 @@ Cost_columns = {
     "19":"HouseCost-19",
     "20":"HouseCost-20",
     "21":"HouseCost-21",
+    "22":"HouseCost-22",
 }
-
+def convert_to_int_if_possible(column):
+    if column.dtype == float and column.apply(lambda x: x.is_integer()).all():
+        return column.astype(int)
+    return column
 @op(ins={'start': In(bool)}, out=Out(CostDataFrame))
 def extract_cost_data(start) -> CostDataFrame:
     conn = MongoClient(mongo_connection_string)
     db = conn["JobRisk_Backup"]
     Cost = pd.DataFrame(db.PropertyCollection.find())
     Cost.drop(
-        columns=['RegonType'],
+        columns=['_id'],
         axis=1,
         inplace=True
     )
@@ -252,8 +255,23 @@ def extract_cost_data(start) -> CostDataFrame:
         columns=Cost_columns,
         inplace=True
     )
+    Cost.fillna(0, inplace=True)
+
+# replace infinity with a large finite number
+    Cost.replace([np.inf, -np.inf], 1e15, inplace=True)
+    cols_to_convert = Cost.filter(regex='^HouseCost-', axis=1).columns
+    Cost[cols_to_convert] = Cost[cols_to_convert].astype(int)
     conn.close()
     return Cost
+def numex(i):
+    i = int(i)
+    return i
+conn = MongoClient(mongo_connection_string)
+db = conn["JobRisk_Backup"]
+Cost = pd.DataFrame(db.PropertyCollection.find())
+
+
+
 
 @op(ins={'Cost': In(CostDataFrame)}, out=Out(None))
 def stage_extracted_costs(Cost):

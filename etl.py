@@ -4,8 +4,8 @@ from Extract import *
 from Transform import *
 from Load import *
 @op(out=Out(bool))
-def load_dimensions(stormim,censusim):
-    return stormim and censusim
+def load_dimensions(stormim,costmim):
+    return stormim and costmim
 
 
 @job
@@ -17,15 +17,14 @@ def etl():
                 stage_extracted_disasters(
                     extract_Incident()
             )))
-        ),censusim=load_census_dimension(
-        stage_transformed_census_data(
-        transform_extracted_CensusData(
-        stage_extracted_census(
-        extract_census_data()
+        )
+        ,costmim=load_cost_dimension(
+            stage_transformed_costs(
+                stage_extracted_costs(
+                    extract_cost_data()
         )
         )
-        )
-        )
+        ),
     )
                 
             

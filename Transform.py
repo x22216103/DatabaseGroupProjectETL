@@ -48,13 +48,34 @@ TransformedCensusDataFrame = create_dagster_pandas_dataframe_type(
 TransformedCostDataFrame = create_dagster_pandas_dataframe_type(
     name="TransformedCostDataFrame",
     columns=[
-        PandasColumn.string_column("_id", non_nullable=True),
-        PandasColumn.datetime_column("",  non_nullable=True),
-        PandasColumn.string_column("",  non_nullable=True),
-        PandasColumn.string_column("",  non_nullable=True),
-        PandasColumn.string_column("",  non_nullable=True),
-        PandasColumn.string_column("",  non_nullable=True)
-    ],
+    PandasColumn.string_column("_id", non_nullable=True),
+    PandasColumn.integer_column("costavg_2000", non_nullable=True),
+    PandasColumn.integer_column("costavg_2001", non_nullable=True),
+    PandasColumn.integer_column("costavg_2002", non_nullable=True),
+    PandasColumn.integer_column("costavg_2003", non_nullable=True),
+    PandasColumn.integer_column("costavg_2004", non_nullable=True),
+    PandasColumn.integer_column("costavg_2005", non_nullable=True),
+    PandasColumn.integer_column("costavg_2006", non_nullable=True),
+    PandasColumn.integer_column("costavg_2007", non_nullable=True),
+    PandasColumn.integer_column("costavg_2008", non_nullable=True),
+    PandasColumn.integer_column("costavg_2009", non_nullable=True),
+    PandasColumn.integer_column("costavg_2010", non_nullable=True),
+    PandasColumn.integer_column("costavg_2011", non_nullable=True),
+    PandasColumn.integer_column("costavg_2012", non_nullable=True),
+    PandasColumn.integer_column("costavg_2013", non_nullable=True),
+    PandasColumn.integer_column("costavg_2014", non_nullable=True),
+    PandasColumn.integer_column("costavg_2015", non_nullable=True),
+    PandasColumn.integer_column("costavg_2016", non_nullable=True),
+    PandasColumn.integer_column("costavg_2017", non_nullable=True),
+    PandasColumn.integer_column("costavg_2018", non_nullable=True),
+    PandasColumn.integer_column("costavg_2019", non_nullable=True),
+    PandasColumn.integer_column("costavg_2020", non_nullable=True),
+    PandasColumn.integer_column("costavg_2021", non_nullable=True),
+    PandasColumn.integer_column("costavg_2022", non_nullable=True),
+    PandasColumn.string_column("populationrank", non_nullable=True),
+    PandasColumn.string_column("hlocation", non_nullable=True),
+    PandasColumn.string_column("us_state", non_nullable=True)
+],
 )
 
 
@@ -113,32 +134,37 @@ def transform_extracted_CensusData(start) -> TransformedCensusDataFrame:
 @op(ins={'start':In(None)},out=Out(TransformedCostDataFrame))
 def transform_extracted_CostData(start) -> TransformedCostDataFrame:
     Cost = pd.read_csv("staging/CostData.csv", sep="\t")
-    Cost["CostAVG_2000"] = round(Cost["HouseCost-00"],2)
-    Cost["CostAVG_2001"] = round(Cost["HouseCost-01"],2)
-    Cost["CostAVG_2002"] = round(Cost["HouseCost-02"],2)
-    Cost["CostAVG_2003"] = round(Cost["HouseCost-03"],2)
-    Cost["CostAVG_2004"] = round(Cost["HouseCost-04"],2)
-    Cost["CostAVG_2005"] = round(Cost["HouseCost-05"],2)
-    Cost["CostAVG_2006"] = round(Cost["HouseCost-06"],2)
-    Cost["CostAVG_2007"] = round(Cost["HouseCost-07"],2)
-    Cost["CostAVG_2008"] = round(Cost["HouseCost-08"],2)
-    Cost["CostAVG_2009"] = round(Cost["HouseCost-09"],2)
-    Cost["CostAVG_2010"] = round(Cost["HouseCost-10"],2)
-    Cost["CostAVG_2011"] = round(Cost["HouseCost-11"],2)
-    Cost["CostAVG_2012"] = round(Cost["HouseCost-12"],2)
-    Cost["CostAVG_2013"] = round(Cost["HouseCost-13"],2)
-    Cost["CostAVG_2014"] = round(Cost["HouseCost-14"],2)
-    Cost["CostAVG_2015"] = round(Cost["HouseCost-15"],2)
-    Cost["CostAVG_2016"] = round(Cost["HouseCost-16"],2)
-    Cost["CostAVG_2017"] = round(Cost["HouseCost-17"],2)
-    Cost["CostAVG_2018"] = round(Cost["HouseCost-18"],2)
-    Cost["CostAVG_2019"] = round(Cost["HouseCost-19"],2)
-    Cost["CostAVG_2020"] = round(Cost["HouseCost-20"],2)
-    Cost["CostAVG_2021"] = round(Cost["HouseCost-21"],2)
-    Cost["CostAVG_2022"] = round(Cost["HouseCost-22"],2)
-    Cost["PopulationRank"] = Cost["Population_Rank"]
-    Cost["HLocation"]=Cost["Region"]
-    Cost['USState']= Cost["State"]
+    Cost["costavg_2000"] = Cost["0"]
+    Cost["costavg_2001"] = Cost["HouseCost-01"]
+    Cost["costavg_2002"] = Cost["HouseCost-02"]
+    Cost["costavg_2003"] = Cost["HouseCost-03"]
+    Cost["costavg_2004"] = Cost["HouseCost-04"]
+    Cost["costavg_2005"] = Cost["HouseCost-05"]
+    Cost["costavg_2006"] = Cost["HouseCost-06"]
+    Cost["costavg_2007"] = Cost["HouseCost-07"]
+    Cost["costavg_2008"] = Cost["HouseCost-08"]
+    Cost["costavg_2009"] = Cost["HouseCost-09"]
+    Cost["costavg_2010"] = Cost["HouseCost-10"]
+    Cost["costavg_2011"] = Cost["HouseCost-11"]
+    Cost["costavg_2012"] = Cost["HouseCost-12"]
+    Cost["costavg_2013"] = Cost["HouseCost-13"]
+    Cost["costavg_2014"] = Cost["HouseCost-14"]
+    Cost["costavg_2015"] = Cost["HouseCost-15"]
+    Cost["costavg_2016"] = Cost["HouseCost-16"]
+    Cost["costavg_2017"] = Cost["HouseCost-17"]
+    Cost["costavg_2018"] = Cost["HouseCost-18"]
+    Cost["costavg_2019"] = Cost["HouseCost-19"]
+    Cost["costavg_2020"] = Cost["HouseCost-20"]
+    Cost["costavg_2021"] = Cost["HouseCost-21"]
+    Cost["costavg_2022"] = Cost["HouseCost-22"]
+    Cost["populationrank"] = Cost["Population_Rank"]
+    Cost["hlocation"]=Cost["Region"]
+    Cost['us_state']= Cost["State"]
+    Cost.drop(
+        columns=["Population_Rank","Region","State","0","HouseCost-01", "HouseCost-02", "HouseCost-03", "HouseCost-04", "HouseCost-05", "HouseCost-06", "HouseCost-07", "HouseCost-08", "HouseCost-09", "HouseCost-10", "HouseCost-11", "HouseCost-12", "HouseCost-13", "HouseCost-14", "HouseCost-15", "HouseCost-16", "HouseCost-17", "HouseCost-18", "HouseCost-19", "HouseCost-20", "HouseCost-21"],
+        axis=1,
+        inplace=True
+    )
     return Cost
 
 @op(ins={'disasters': In(TransformedFemaDataFrame)}, out=Out(None))
@@ -156,7 +182,7 @@ def stage_transformed_census_data(census):
         sep="\t",
         index=False
     )
-@op(ins={'cost': In(TransformedCensusDataFrame)}, out=Out(None))
+@op(ins={'cost': In(TransformedCostDataFrame)}, out=Out(None))
 def stage_transformed_costs(cost):
     cost.to_csv(
         "staging/transformed_costs.csv",
