@@ -54,7 +54,7 @@ def load_census_dimension(start):
 @op(ins={'start': In(None)},out=Out(bool))
 def load_cost_dimension(start):
     logger = get_dagster_logger()
-    cost = pd.read_csv("staging/transformed_cost.csv", sep="\t")
+    cost = pd.read_csv("staging/transformed_costs.csv", sep="\t")
     try:
         engine = create_engine(postgres_connection_string,poolclass=NullPool)
         engine.execute("TRUNCATE cost_dimension;")

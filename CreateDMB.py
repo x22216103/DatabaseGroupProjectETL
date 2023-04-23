@@ -21,9 +21,8 @@ def CensusFileRead(db):
     for entry in data:
         db.insert_one(entry)
     f.close()
-
 def costFilePull(db):
-    df= pd.read_csv('zillowAvgHP.csv', header=[0])
+    df= pd.read_csv('AVGHousePrice.csv', delimiter='\t')
     db.insert_many(df.to_dict('records'))
    
 
@@ -64,5 +63,7 @@ if 'JobRisk_Backup' not in client.list_database_names():
     costFilePull(database.PropertyCollection)
 else:
     database = client['JobRisk_Backup']
+    PropertyCollection = database['Cost_of_Property_Collection']
+    costFilePull(database.PropertyCollection)
     
     
