@@ -48,8 +48,8 @@ TransformedCensusDataFrame = create_dagster_pandas_dataframe_type(
 TransformedCostDataFrame = create_dagster_pandas_dataframe_type(
     name="TransformedCostDataFrame",
     columns=[
-    PandasColumn.string_column("_id", non_nullable=True),
-    PandasColumn.integer_column("costavg_2000", non_nullable=True),
+    PandasColumn.integer_column("_id", non_nullable=True),
+    PandasColumn.float_column("costavg_2000", non_nullable=True),
     PandasColumn.integer_column("costavg_2001", non_nullable=True),
     PandasColumn.integer_column("costavg_2002", non_nullable=True),
     PandasColumn.integer_column("costavg_2003", non_nullable=True),
@@ -72,7 +72,7 @@ TransformedCostDataFrame = create_dagster_pandas_dataframe_type(
     PandasColumn.integer_column("costavg_2020", non_nullable=True),
     PandasColumn.integer_column("costavg_2021", non_nullable=True),
     PandasColumn.integer_column("costavg_2022", non_nullable=True),
-    PandasColumn.string_column("populationrank", non_nullable=True),
+    PandasColumn.integer_column("populationrank", non_nullable=True),
     PandasColumn.string_column("hlocation", non_nullable=True),
     PandasColumn.string_column("us_state", non_nullable=True)
 ],
@@ -161,7 +161,7 @@ def transform_extracted_CostData(start) -> TransformedCostDataFrame:
     Cost["hlocation"]=Cost["Region"]
     Cost['us_state']= Cost["State"]
     Cost.drop(
-        columns=["Population_Rank","Region","State","0","HouseCost-01", "HouseCost-02", "HouseCost-03", "HouseCost-04", "HouseCost-05", "HouseCost-06", "HouseCost-07", "HouseCost-08", "HouseCost-09", "HouseCost-10", "HouseCost-11", "HouseCost-12", "HouseCost-13", "HouseCost-14", "HouseCost-15", "HouseCost-16", "HouseCost-17", "HouseCost-18", "HouseCost-19", "HouseCost-20", "HouseCost-21"],
+        columns=["RegionType","HouseCost-22","Population_Rank","Region","State","0","HouseCost-01", "HouseCost-02", "HouseCost-03", "HouseCost-04", "HouseCost-05", "HouseCost-06", "HouseCost-07", "HouseCost-08", "HouseCost-09", "HouseCost-10", "HouseCost-11", "HouseCost-12", "HouseCost-13", "HouseCost-14", "HouseCost-15", "HouseCost-16", "HouseCost-17", "HouseCost-18", "HouseCost-19", "HouseCost-20", "HouseCost-21"],
         axis=1,
         inplace=True
     )

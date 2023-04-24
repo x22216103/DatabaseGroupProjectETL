@@ -1,0 +1,24 @@
+[32m2023-04-23 22:34:02 +0100[0m - dagster - [34mDEBUG[0m - etl - 24f1af4b-53d1-4722-a5c9-17884147e883 - 12872 - LOGS_CAPTURED - Started capturing logs in process (pid: 12872).
+[32m2023-04-23 22:34:02 +0100[0m - dagster - [34mDEBUG[0m - etl - 24f1af4b-53d1-4722-a5c9-17884147e883 - 12872 - stage_transformed_census_data - STEP_START - Started execution of step "stage_transformed_census_data".
+[32m2023-04-23 22:34:02 +0100[0m - dagster - [34mDEBUG[0m - etl - 24f1af4b-53d1-4722-a5c9-17884147e883 - stage_transformed_census_data - Loading file from: /home/ste/DatabaseGroupProjectETL/tmpy6uj8ex7/storage/24f1af4b-53d1-4722-a5c9-17884147e883/extract_census_data/result
+[32m2023-04-23 22:34:03 +0100[0m - dagster - [34mDEBUG[0m - etl - 24f1af4b-53d1-4722-a5c9-17884147e883 - 12872 - stage_transformed_census_data - LOADED_INPUT - Loaded input "census" using input manager "io_manager", from output "result" of step "extract_census_data"
+[32m2023-04-23 22:34:03 +0100[0m - dagster - [34mDEBUG[0m - etl - 24f1af4b-53d1-4722-a5c9-17884147e883 - 12872 - stage_transformed_census_data - STEP_INPUT - Got input "census" of type "TransformedCensusDataFrame". Warning! Type check failed.
+[32m2023-04-23 22:34:03 +0100[0m - dagster - [34mERROR[0m - [31metl - 24f1af4b-53d1-4722-a5c9-17884147e883 - 12872 - stage_transformed_census_data - STEP_FAILURE - Execution of step "stage_transformed_census_data" failed.
+
+dagster._core.errors.DagsterTypeCheckDidNotPass: Type check failed for step input "census" - expected type "TransformedCensusDataFrame". Description: Required column jobnumbers_01 not in dataframe with columns Index(['_id', 'geofips', 'GeoName', 'Region', 'IndustryClassification',
+       'Description', 'Unit', 'JNYear-2001', 'JNYear-2002', 'JNYear-2003',
+       'JNYear-2004', 'JNYear-2005', 'JNYear-2006', 'JNYear-2007',
+       'JNYear-2008', 'JNYear-2009', 'JNYear-2010', 'JNYear-2011',
+       'JNYear-2012', 'JNYear-2013', 'JNYear-2014', 'JNYear-2015',
+       'JNYear-2016', 'JNYear-2017', 'JNYear-2018', 'JNYear-2019',
+       'JNYear-2020', 'JNYear-2021'],
+      dtype='object')
+
+Stack Trace:
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/execution/plan/execute_plan.py", line 269, in dagster_event_sequence_for_step
+    for step_event in check.generator(step_events):
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/execution/plan/execute_step.py", line 354, in core_dagster_event_sequence_for_step
+    for evt in check.generator(
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/execution/plan/execute_step.py", line 254, in _type_checked_event_sequence_for_input
+    raise DagsterTypeCheckDidNotPass(
+[0m

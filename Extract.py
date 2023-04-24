@@ -263,12 +263,7 @@ def extract_cost_data(start) -> CostDataFrame:
     Cost[cols_to_convert] = Cost[cols_to_convert].astype(int)
     conn.close()
     return Cost
-def numex(i):
-    i = int(i)
-    return i
-conn = MongoClient(mongo_connection_string)
-db = conn["JobRisk_Backup"]
-Cost = pd.DataFrame(db.PropertyCollection.find())
+
 
 
 

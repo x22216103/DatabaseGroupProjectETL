@@ -1,0 +1,28 @@
+[32m2023-04-23 22:43:42 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15266 - LOGS_CAPTURED - Started capturing logs in process (pid: 15266).
+[32m2023-04-23 22:43:42 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15266 - transform_extracted_CostData - STEP_START - Started execution of step "transform_extracted_CostData".
+[32m2023-04-23 22:43:42 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - transform_extracted_CostData - Loading file from: /home/ste/DatabaseGroupProjectETL/tmpy6uj8ex7/storage/96e3923c-83f2-447d-bf9c-2b6941ccebfc/stage_extracted_costs/result
+[32m2023-04-23 22:43:42 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15266 - transform_extracted_CostData - LOADED_INPUT - Loaded input "start" using input manager "io_manager", from output "result" of step "stage_extracted_costs"
+[32m2023-04-23 22:43:42 +0100[0m - dagster - [34mERROR[0m - [31metl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15266 - transform_extracted_CostData - STEP_FAILURE - Execution of step "transform_extracted_CostData" failed.
+
+dagster._core.errors.DagsterExecutionInterruptedError
+
+Stack Trace:
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/execution/plan/execute_plan.py", line 269, in dagster_event_sequence_for_step
+    for step_event in check.generator(step_events):
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/execution/plan/execute_step.py", line 354, in core_dagster_event_sequence_for_step
+    for evt in check.generator(
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/execution/plan/execute_step.py", line 242, in _type_checked_event_sequence_for_input
+    with user_code_error_boundary(
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/errors.py", line 202, in user_code_error_boundary
+    with raise_execution_interrupts():
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_core/errors.py", line 168, in raise_execution_interrupts
+    with raise_interrupts_as(DagsterExecutionInterruptedError):
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/contextlib.py", line 135, in __enter__
+    return next(self.gen)
+  File "/home/ste/anaconda3/envs/etl/lib/python3.10/site-packages/dagster/_utils/interrupts.py", line 93, in raise_interrupts_as
+    raise error_cls()
+[0m
