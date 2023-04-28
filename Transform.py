@@ -49,7 +49,6 @@ TransformedCostDataFrame = create_dagster_pandas_dataframe_type(
     name="TransformedCostDataFrame",
     columns=[
     PandasColumn.integer_column("_id", non_nullable=True),
-    PandasColumn.float_column("costavg_2000", non_nullable=True),
     PandasColumn.integer_column("costavg_2001", non_nullable=True),
     PandasColumn.integer_column("costavg_2002", non_nullable=True),
     PandasColumn.integer_column("costavg_2003", non_nullable=True),
@@ -134,7 +133,6 @@ def transform_extracted_CensusData(start) -> TransformedCensusDataFrame:
 @op(ins={'start':In(None)},out=Out(TransformedCostDataFrame))
 def transform_extracted_CostData(start) -> TransformedCostDataFrame:
     Cost = pd.read_csv("staging/CostData.csv", sep="\t")
-    Cost["costavg_2000"] = Cost["0"]
     Cost["costavg_2001"] = Cost["HouseCost-01"]
     Cost["costavg_2002"] = Cost["HouseCost-02"]
     Cost["costavg_2003"] = Cost["HouseCost-03"]

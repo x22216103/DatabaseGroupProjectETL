@@ -1,0 +1,7 @@
+[32m2023-04-24 20:42:57 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - 89611 - LOGS_CAPTURED - Started capturing logs in process (pid: 89611).
+[32m2023-04-24 20:42:57 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - 89611 - extract_census_data - STEP_START - Started execution of step "extract_census_data".
+[32m2023-04-24 20:42:57 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - 89611 - extract_census_data - STEP_INPUT - Got input "start" of type "Bool". (Type check passed).
+[32m2023-04-24 20:43:07 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - 89611 - extract_census_data - STEP_OUTPUT - Yielded output "result" of type "CensusDataFrame". (Type check passed).
+[32m2023-04-24 20:43:07 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - extract_census_data - Writing file at: /Users/douglas_cinachi/Documents/GitHub/DatabaseGroupProjectETL/DatabaseGroupProjectETL/tmpkxn7vlo_/storage/be58b6f0-b985-4b95-a610-9efd2e286551/extract_census_data/result
+[32m2023-04-24 20:43:10 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - 89611 - extract_census_data - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2023-04-24 20:43:10 +0100[0m - dagster - [34mDEBUG[0m - etl - be58b6f0-b985-4b95-a610-9efd2e286551 - 89611 - extract_census_data - STEP_SUCCESS - Finished execution of step "extract_census_data" in 13.92s.

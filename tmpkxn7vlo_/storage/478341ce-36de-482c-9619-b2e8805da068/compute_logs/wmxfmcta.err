@@ -1,0 +1,7 @@
+[32m2023-04-24 20:23:47 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - 87977 - LOGS_CAPTURED - Started capturing logs in process (pid: 87977).
+[32m2023-04-24 20:23:47 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - 87977 - extract_cost_data - STEP_START - Started execution of step "extract_cost_data".
+[32m2023-04-24 20:23:47 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - 87977 - extract_cost_data - STEP_INPUT - Got input "start" of type "Bool". (Type check passed).
+[32m2023-04-24 20:23:48 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - 87977 - extract_cost_data - STEP_OUTPUT - Yielded output "result" of type "CostDataFrame". (Type check passed).
+[32m2023-04-24 20:23:48 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - extract_cost_data - Writing file at: /Users/douglas_cinachi/Documents/GitHub/DatabaseGroupProjectETL/DatabaseGroupProjectETL/tmpkxn7vlo_/storage/478341ce-36de-482c-9619-b2e8805da068/extract_cost_data/result
+[32m2023-04-24 20:23:48 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - 87977 - extract_cost_data - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2023-04-24 20:23:48 +0100[0m - dagster - [34mDEBUG[0m - etl - 478341ce-36de-482c-9619-b2e8805da068 - 87977 - extract_cost_data - STEP_SUCCESS - Finished execution of step "extract_cost_data" in 550ms.
