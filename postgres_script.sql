@@ -3,7 +3,7 @@ CREATE TABLE cost_dimension(
 	_id character varying(500),
 	PopulationRank integer,
 	HLocation character varying(50),
-	USState character varying(50),
+	us_state character varying(50),
     costavg_2000 FLOAT,
     costavg_2001 FLOAT,
     costavg_2002 FLOAT,
@@ -33,10 +33,8 @@ DROP TABLE IF EXISTS public.census_dimension;
 CREATE TABLE public.census_dimension (
 	_id character varying(5000),
 	GeoFIPS character varying(5000) not null,
-	SLocation character varying(5000),
 	Main_Industry character varying(5000),
 	wealthMeasurement character varying(5000),
-    JobNumbers_00 character varying(25),
     JobNumbers_01 character varying(25),
     JobNumbers_02 character varying(25),
     JobNumbers_03 character varying(25),
@@ -58,7 +56,6 @@ CREATE TABLE public.census_dimension (
     JobNumbers_19 character varying(25),
     JobNumbers_20 character varying(25),
     JobNumbers_21 character varying(25),
-    JobNumbers_22 character varying(25),
 	CONSTRAINT pk_census PRIMARY KEY (_id)
 );
 DROP FUNCTION IF EXISTS public.extract_month_name(date);
@@ -86,15 +83,14 @@ DROP TABLE IF EXISTS public.storm_dimension;
 CREATE TABLE public.storm_dimension
 (
     _id character varying(500),
-    original_storm_id character(5),
+	fema_string character varying(50),
+    disasterNumber integer,
     Incident_date date NOT NULL,
-    Incident_end_date date,
     state_code character varying(2),
     Incident_Category character varying(100) NOT NULL,
     Incident_Description character varying(255) NOT NULL,
-    FipsGeo character varying(500) NOT NULL,
     County_name character varying(100) NOT NULL,
-    CONSTRAINT pk_storm PRIMARY KEY (_id)
+    CONSTRAINT pk_storm PRIMARY KEY (disasterNumber,fema_string,_id)
 );
 ALTER TABLE IF EXISTS public.storm_dimension  OWNER to postgres;
 ALTER TABLE IF EXISTS public.census_dimension  OWNER to postgres;

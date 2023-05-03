@@ -8,11 +8,13 @@ TransformedFemaDataFrame = create_dagster_pandas_dataframe_type(
     name="TransformedFemaDataFrame",
     columns=[
         PandasColumn.string_column("_id", non_nullable=True),
+        PandasColumn.string_column("fema_string", non_nullable=True),
+        PandasColumn.integer_column("disasternumber", non_nullable=True),
         PandasColumn.datetime_column("incident_date",  non_nullable=True),
         PandasColumn.string_column("state_code",  non_nullable=True),
         PandasColumn.string_column("incident_category",  non_nullable=True),
         PandasColumn.string_column("county_name",  non_nullable=True),
-        PandasColumn.string_column("fipsgeo",  non_nullable=True)
+
     ],
 )
 TransformedCensusDataFrame = create_dagster_pandas_dataframe_type(
@@ -40,7 +42,6 @@ TransformedCensusDataFrame = create_dagster_pandas_dataframe_type(
     PandasColumn.string_column("jobnumbers_20",  non_nullable=False),
     PandasColumn.string_column("jobnumbers_21",  non_nullable=False),
     PandasColumn.string_column("geofips", non_nullable=True),
-    PandasColumn.string_column("slocation", non_nullable=True),
     PandasColumn.string_column("main_industry", non_nullable=False),
     PandasColumn.string_column("wealthmeasurement", non_nullable=False)
     ],
@@ -84,11 +85,11 @@ def transform_extracted_disasters(start) -> TransformedFemaDataFrame:
     disasters = pd.read_csv("staging/fema_disasters.csv", sep="\t")
     print(str(disasters["fips_state"]))
     disasters["_id"] = disasters["_id"]
+    disasters["disasternumber"] = disasters["disasternumber"]
     disasters["incident_category"] = disasters["incident_category"] + ":" + \
        disasters["incident_description"]
     disasters["incident_description"]=disasters["incident_description"]
     disasters["incident_date"] = pd.to_datetime(disasters["incident_date"]).dt.tz_localize(None)
-    disasters["fipsgeo"]= str(disasters['fips_state'])+str(disasters['fips_county'])
     disasters['state_code']=disasters['state_code']
     disasters['county_name']= disasters["county_name"]+':'+disasters['state_code']
     disasters.drop(
@@ -122,7 +123,6 @@ def transform_extracted_CensusData(start) -> TransformedCensusDataFrame:
     Census["jobnumbers_20"] = Census["JNYear-2020"]
     Census["jobnumbers_21"] = Census["JNYear-2021"]
     Census["geofips"] = Census["geofips"]
-    Census["slocation"]=str(Census["GeoName"])+" : "+str(Census["Region"])
     Census['main_industry']="Classification code: "+Census['IndustryClassification']+" Description of industry"+ Census["Description"]
     Census['wealthmeasurement']= Census["Unit"]
     Census.drop(
@@ -189,3 +189,4 @@ def stage_transformed_costs(cost):
         sep="\t",
         index=False
     )
+

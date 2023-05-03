@@ -20,7 +20,11 @@ mongo_connection_string="mongodb://dap:dap@127.0.0.1"
 FemaDataFrame = create_dagster_pandas_dataframe_type(
     name="FemaDataFrame",
     columns=[
-        PandasColumn.string_column("_id",non_nullable=True, unique=True),
+        PandasColumn.string_column("_id",
+            non_nullable=True),
+        PandasColumn.integer_column("disasternumber",non_nullable=True, unique=False),
+        PandasColumn.string_column("fema_string",
+            non_nullable=True),
         PandasColumn.string_column("incident_date",
             non_nullable=True),
         PandasColumn.string_column("state_code", non_nullable=True),
@@ -31,11 +35,7 @@ FemaDataFrame = create_dagster_pandas_dataframe_type(
         PandasColumn.string_column("county_name", non_nullable=True)
     ],
 )
-def convert_columns_to_integer(df):
-    for column in df.columns:
-        if column.startswith("HouseCost-") and df[column].dtype == float and df[column].apply(lambda x: x.is_integer()).all():
-            df[column] = df[column].astype(int)
-    return df
+
 
 def is_tuple(_, value):
     return isinstance(value, tuple) and all(
@@ -48,9 +48,10 @@ DateTuple = DagsterType(
     description="A tuple of scalar values",
 )
 Fema_columns = {
-    "_id": "_id",
+    "femaDeclarationString":"fema_string",
+    "_id":"_id",
+    "disasterNumber": "disasternumber",
     "incidentBeginDate":"incident_date",
-    "incidentEndDate":"incident_end_date",
     "state": "state_code",
     "incidentType":"incident_category",
     "declarationTitle": "incident_description",
@@ -65,7 +66,7 @@ def extract_Incident(start) -> FemaDataFrame:
     db = conn["JobRisk_Backup"]
     Fema = pd.DataFrame(db.FemaCollection.find())
     Fema.drop(
-        columns=["disasterNumber","femaDeclarationString", "declarationType","declarationDate","fyDeclared","ihProgramDeclared","iaProgramDeclared","paProgramDeclared","hmProgramDeclared","incidentEndDate","disasterCloseoutDate","placeCode","declarationRequestNumber","lastIAFilingDate","lastRefresh","hash","id"],
+        columns=["incidentEndDate", "declarationType","declarationDate","fyDeclared","ihProgramDeclared","iaProgramDeclared","paProgramDeclared","hmProgramDeclared","disasterCloseoutDate","placeCode","declarationRequestNumber","lastIAFilingDate","lastRefresh","hash","id"],
         axis=1,
         inplace=True
     )
@@ -237,10 +238,7 @@ Cost_columns = {
     "21":"HouseCost-21",
     "22":"HouseCost-22",
 }
-def convert_to_int_if_possible(column):
-    if column.dtype == float and column.apply(lambda x: x.is_integer()).all():
-        return column.astype(int)
-    return column
+
 @op(ins={'start': In(bool)}, out=Out(CostDataFrame))
 def extract_cost_data(start) -> CostDataFrame:
     conn = MongoClient(mongo_connection_string)
