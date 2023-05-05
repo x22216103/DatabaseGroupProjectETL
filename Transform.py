@@ -1,3 +1,4 @@
+import os
 from dagster import op, Out, In
 from dagster_pandas import PandasColumn, create_dagster_pandas_dataframe_type
 from datetime import datetime, date
@@ -174,6 +175,7 @@ def stage_transformed_disasters(disasters):
         sep="\t",
         index=False
     )
+    os.remove("staging/fema_disasters.csv")
 
 @op(ins={'census': In(TransformedCensusDataFrame)}, out=Out(None))
 def stage_transformed_census_data(census):
@@ -182,6 +184,7 @@ def stage_transformed_census_data(census):
         sep="\t",
         index=False
     )
+    os.remove("staging/censusData.csv")
 @op(ins={'cost': In(TransformedCostDataFrame)}, out=Out(None))
 def stage_transformed_costs(cost):
     cost.to_csv(
@@ -189,4 +192,5 @@ def stage_transformed_costs(cost):
         sep="\t",
         index=False
     )
+    os.remove("staging/CostData.csv")
 

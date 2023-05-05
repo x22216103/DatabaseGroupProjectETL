@@ -62,25 +62,30 @@ Fema_columns = {
 
 @op(ins={'start': In(bool)}, out=Out(FemaDataFrame))
 def extract_Incident(start) -> FemaDataFrame:
-    conn = MongoClient(mongo_connection_string)
-    db = conn["JobRisk_Backup"]
-    Fema = pd.DataFrame(db.FemaCollection.find())
-    Fema.drop(
-        columns=["incidentEndDate", "declarationType","declarationDate","fyDeclared","ihProgramDeclared","iaProgramDeclared","paProgramDeclared","hmProgramDeclared","disasterCloseoutDate","placeCode","declarationRequestNumber","lastIAFilingDate","lastRefresh","hash","id"],
-        axis=1,
-        inplace=True
-    )
-    Fema.rename(
-        columns=Fema_columns,
-        inplace=True
-    )
-    conn.close()
-    return Fema
+    try:
+        conn = MongoClient(mongo_connection_string)
+        db = conn["JobRisk_Backup"]
+        Fema = pd.DataFrame(db.FemaCollection.find())
+        Fema.drop(
+            columns=["incidentEndDate", "declarationType","declarationDate","fyDeclared","ihProgramDeclared","iaProgramDeclared","paProgramDeclared","hmProgramDeclared","disasterCloseoutDate","placeCode","declarationRequestNumber","lastIAFilingDate","lastRefresh","hash","id"],
+            axis=1,
+            inplace=True
+        )
+        Fema.rename(
+            columns=Fema_columns,
+            inplace=True
+        )
+        conn.close()
+        return Fema
+    except Exception as e:
+        print(f"Error: {e}")
 
 @op(ins={'Fema': In(FemaDataFrame)}, out=Out(None))
 def stage_extracted_disasters(Fema):
-    Fema.to_csv("staging/fema_disasters.csv",index=False,sep="\t")
-
+    try:
+        Fema.to_csv("staging/fema_disasters.csv", index=False, sep="\t")
+    except Exception as e:
+        print(f"Error: {e}")
 CensusDataFrame = create_dagster_pandas_dataframe_type(
     name="CensusDataFrame",
     columns=[
@@ -157,24 +162,30 @@ Census_columns = {
 
 @op(ins={'start': In(bool)}, out=Out(CensusDataFrame))
 def extract_census_data(start) -> CensusDataFrame:
-    conn = MongoClient(mongo_connection_string)
-    db = conn["JobRisk_Backup"]
-    Census = pd.DataFrame(db.CensusCollection.find())
-    Census.drop(
-        columns=['LineCode','TableName'],
-        axis=1,
-        inplace=True
-    )
-    Census.rename(
-        columns=Census_columns,
-        inplace=True
-    )
-    conn.close()
-    return Census
+    try:
+        conn = MongoClient(mongo_connection_string)
+        db = conn["JobRisk_Backup"]
+        Census = pd.DataFrame(db.CensusCollection.find())
+        Census.drop(
+            columns=['LineCode','TableName'],
+            axis=1,
+            inplace=True
+        )
+        Census.rename(
+            columns=Census_columns,
+            inplace=True
+        )
+        conn.close()
+        return Census
+    except Exception as e:
+        print(f"Error: {e}")
 
 @op(ins={'Census': In(CensusDataFrame)}, out=Out(None))
 def stage_extracted_census(Census):
-    Census.to_csv("staging/censusData.csv",index=False,sep="\t")
+    try:
+        Census.to_csv("staging/censusData.csv",index=False,sep="\t")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 
@@ -241,26 +252,32 @@ Cost_columns = {
 
 @op(ins={'start': In(bool)}, out=Out(CostDataFrame))
 def extract_cost_data(start) -> CostDataFrame:
-    conn = MongoClient(mongo_connection_string)
-    db = conn["JobRisk_Backup"]
-    Cost = pd.DataFrame(db.PropertyCollection.find())
-    Cost.drop(
-        columns=['_id'],
-        axis=1,
-        inplace=True
-    )
-    Cost.rename(
-        columns=Cost_columns,
-        inplace=True
-    )
-    Cost.fillna(0, inplace=True)
+    try:
+        conn = MongoClient(mongo_connection_string)
+        db = conn["JobRisk_Backup"]
+        Cost = pd.DataFrame(db.PropertyCollection.find())
+        Cost.drop(
+            columns=['_id'],
+            axis=1,
+            inplace=True
+        )
+        Cost.rename(
+            columns=Cost_columns,
+            inplace=True
+        )
+        Cost.fillna(0, inplace=True)
 
-# replace infinity with a large finite number
-    Cost.replace([np.inf, -np.inf], 1e15, inplace=True)
-    cols_to_convert = Cost.filter(regex='^HouseCost-', axis=1).columns
-    Cost[cols_to_convert] = Cost[cols_to_convert].astype(int)
-    conn.close()
+        # replace infinity with a large finite number
+        Cost.replace([np.inf, -np.inf], 1e15, inplace=True)
+        cols_to_convert = Cost.filter(regex='^HouseCost-', axis=1).columns
+        Cost[cols_to_convert] = Cost[cols_to_convert].astype(int)
+    except Exception as e:
+        print(f"An error occurred while extracting cost data: {e}")
+        Cost = pd.DataFrame()
+    finally:
+        conn.close()
     return Cost
+
 
 
 
@@ -268,6 +285,10 @@ def extract_cost_data(start) -> CostDataFrame:
 
 @op(ins={'Cost': In(CostDataFrame)}, out=Out(None))
 def stage_extracted_costs(Cost):
-    Cost.to_csv("staging/CostData.csv",index=False,sep="\t")
+    try:
+        Cost.to_csv("staging/CostData.csv",index=False,sep="\t")
+    except Exception as e:
+        print(f"Error occurred while writing Cost data to file: {e}")
+
 
 
