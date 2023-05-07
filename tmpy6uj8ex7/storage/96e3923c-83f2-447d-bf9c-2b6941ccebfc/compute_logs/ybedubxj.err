@@ -1,7 +1,0 @@
-[32m2023-04-23 22:43:34 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15104 - LOGS_CAPTURED - Started capturing logs in process (pid: 15104).
-[32m2023-04-23 22:43:35 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15104 - extract_Incident - STEP_START - Started execution of step "extract_Incident".
-[32m2023-04-23 22:43:35 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15104 - extract_Incident - STEP_INPUT - Got input "start" of type "Bool". (Type check passed).
-[32m2023-04-23 22:43:35 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15104 - extract_Incident - STEP_OUTPUT - Yielded output "result" of type "FemaDataFrame". (Type check passed).
-[32m2023-04-23 22:43:35 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - extract_Incident - Writing file at: /home/ste/DatabaseGroupProjectETL/tmpy6uj8ex7/storage/96e3923c-83f2-447d-bf9c-2b6941ccebfc/extract_Incident/result
-[32m2023-04-23 22:43:35 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15104 - extract_Incident - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
-[32m2023-04-23 22:43:35 +0100[0m - dagster - [34mDEBUG[0m - etl - 96e3923c-83f2-447d-bf9c-2b6941ccebfc - 15104 - extract_Incident - STEP_SUCCESS - Finished execution of step "extract_Incident" in 740ms.
